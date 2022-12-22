@@ -1,0 +1,26 @@
+version: "3.7"
+
+volumes:
+  static_volume: {}
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./compose/api/Dockerfile
+    image: todo-api:v1
+    container_name: todo-api
+    restart: unless-stopped
+    volumes:
+      - ./:/app/todo-api
+      - static_volume:/app/todo-api/staticfiles
+      
+  nginx:
+    build: ./compose/nginx
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - api
+    volumes:
+      - static_volume:/app/todo-api/staticfiles
